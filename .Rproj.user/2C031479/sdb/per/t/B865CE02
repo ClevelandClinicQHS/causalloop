@@ -1,0 +1,18 @@
+{
+    "contents" : "#' Title\n#'\n#' @param edf\n#'\n#' @return\n#' @export\n#'\n#' @examples\nedfToCLD <- function(edf){\n  return(1)\n}\n",
+    "created" : 1510241270069.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1511739627",
+    "id" : "B865CE02",
+    "lastKnownWriteTime" : 1510243747,
+    "path" : "~/GitHub/causalloop/R/edfToCLD.R",
+    "project_path" : "R/edfToCLD.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

@@ -1,0 +1,18 @@
+{
+    "contents" : "#' Create a causal loop diagram (CLD) object\n#'\n#' @param from A vector of type character, providing the variables at the beginning of\n#' each (directional) causal link.\n#' @param to A vector of type character, containing the variables at the end of each\n#' (directional) causal link. Must be the same length as \\code{from}.\n#' @param polarity A numeric vector containing the edge polarities. Must be the same\n#' length as \\code{from} and \\code{to} and must contain values in \\code{c(-1,1)}.\n#' Defaults to 1 for all edges.\n#' @param weight A numeric vector containing the edge weights (e.g., importance\n#' weights). Must be the same length as \\code{from} and \\code{to} and must contain\n#' values in \\code{1:5}. Defaults to 1 for all edges.\n#'\n#' @return A CLD object. This is a list with the following elements:\n#' \\itemize{\n#'    \\item{\\code{edf}} An edge data frame with the following columns:\n#'        \\itemize{\n#'            \\item{\\code{from}} --- Source variable for the edge.\n#'            Class \\code{character}.\n#'            \\item{\\code{to}} --- Destination variable for the edge.\n#'            Class \\code{character}.\n#'            \\item{\\code{polarity}} --- Edge polarities. Class \\code{integer}.\n#'            \\item{\\code{weight}} --- Edge weights (e.g., importance weight).\n#'            Class \\code{integer}.\n#'        }\n#' }\n#' @export\n#'\n#' @examples\n#' L <- CLD(from=c(\"a\",\"a\",\"c\"), to=c(\"b\",\"c\",\"a\"))\n#' L$edf\n#'\nCLD <- function(from, to, polarity=1, weight=1){\n  L <- list(edf = tibble::tibble(from     = from,\n                                 to       = to,\n                                 polarity = polarity,\n                                 weight   = weight),\n            ndf = tibble::tibble(node        = character(),\n                                 description = character(),\n                                 group       = character()))\n  class(L) <- \"CLD\"\n  return(L)\n}\n",
+    "created" : 1510242309230.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4152297146",
+    "id" : "DAE929EF",
+    "lastKnownWriteTime" : 1510252279,
+    "path" : "~/GitHub/causalloop/R/CLD.R",
+    "project_path" : "R/CLD.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
