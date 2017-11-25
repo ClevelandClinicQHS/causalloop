@@ -6,6 +6,10 @@ Date: 2017-11-09
 Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
+Requires:
+  tibble,
+  dplyr,
+  magrittr
 License: What license is it under?
 LazyData: TRUE
 RoxygenNote: 6.0.1

@@ -13,13 +13,15 @@ each (directional) causal link.}
 \item{to}{A vector of type character, containing the variables at the end of each
 (directional) causal link. Must be the same length as \code{from}.}
 
-\item{polarity}{A numeric vector containing the edge polarities. Must be the same
-length as \code{from} and \code{to} and must contain values in \code{c(-1,1)}.
-Defaults to 1 for all edges.}
+\item{polarity}{A numeric vector containing the edge polarities. Must be either
+a scalar or a vector the same length as \code{from} and \code{to}; and must
+contain values in \code{c(-1,1)}. Defaults to 1 for all edges.}
 
 \item{weight}{A numeric vector containing the edge weights (e.g., importance
 weights). Must be the same length as \code{from} and \code{to} and must contain
 values in \code{1:5}. Defaults to 1 for all edges.}
+
+\item{...}{Additional arguments passed to \code{formatEdges()}.}
 }
 \value{
 A CLD object. This is a list with the following elements:
@@ -40,7 +42,8 @@ A CLD object. This is a list with the following elements:
 Create a causal loop diagram (CLD) object
 }
 \examples{
-L <- CLD(from=c("a","a","c"), to=c("b","c","a"))
+L <- CLD(from=c("a","a","c","c","d"), to=c("b","c","a","d","a"))
 L$edf
+
 
 }
