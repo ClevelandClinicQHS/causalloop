@@ -56,11 +56,11 @@ CLD <- function(from, to, polarity=1, weight=1){
   edf$weight <- weight
 
   #set up default edge and node formats
-  efmt <- tibble(polarity    = c(-1,1),
+  efmt <- tibble(polarity    = c(1,-1),
                  style       = c("solid","dotted"),
                  color       = c("ForestGreen","red"),
                  arrowhead   = c("vee","box"),
-                 penwidthAdj = c(1,5))
+                 penwidthAdj = c(1,2))
 
   nfmt = tibble(group      = "<default>",
                 shape      = "rectangle",

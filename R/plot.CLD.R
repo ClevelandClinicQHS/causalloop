@@ -1,6 +1,7 @@
 #' @name plot.CLD
+#' @aliases plot.CLD plotCLD
 #' @export
-#' @method plot HydeNetwork
+#' @method plot CLD
 #'
 #' @title Plot a causal loop diagram object
 #' @description Causal loop diagrams are generated through an interface to the
@@ -8,19 +9,10 @@
 #'   by manipulating the CLD object or by using functions \code{setEdgeFormat()} and
 #'   \code{setNodeFormat()}.
 #'
-#' @param x an object of class \code{HydeNetwork}
-#' @param nodes (optional) character vector containing the nodes to be plotted. By default,
-#'   when this parameter is specified, all nodes having links to the specified nodes are
-#'   also visualized (i.e., \code{steps = 1}).
-#'   between nodes.
-#' @param steps (optional) Maximum number of steps away from the specified \code{nodes} to
-#'   be included in the figure. Defaults to 1. Only has an effect when \code{nodes} is
-#'   specified.
-#' @param ... for the \code{plot} method, additional arguments to be passed to
-#'   \code{DiagrammeR::render_graph}.
+#' @param CLD an object of class \code{CLD}
 #'
-#' @details See 'Sources' for links to additional documentation from the \code{DiagrammeR}
-#'   package and the GraphViz website.
+#' @details See 'Sources' for links to additional documentation from the
+#'   \code{DiagrammeR} package and the GraphViz website.
 #'
 #' @author Jarrod Dalton
 #'
@@ -34,51 +26,77 @@
 #' @examples
 #' \dontrun{
 #' #* Plots may open in a browser.
-#' data(BlackJack, package="HydeNet")
-#' plot(BlackJack)
-#'
-#' HydePlotOptions(variable=list(shape = "rect", fillcolor = "#A6DBA0"),
-#'                 determ = list(shape = "rect", fillcolor = "#E7D4E8",
-#'                               fontcolor = "#1B7837", linecolor = "#1B7837"),
-#'                 decision = list(shape = "triangle", fillcolor = "#1B7837",
-#'                                 linecolor = "white"),
-#'                 utility = list(shape = "circle", fillcolor = "#762A83",
-#'                                fontcolor = "white"))
-#' plot(BlackJack)
+#' L <- CLD(from=c("a","a","b","c","d","d"), to=c("b","c","a","d","b","a"),
+#'            polarity=c(1,1,-1,-1,1,-1)) %>%
+#'   addNodeData(tibble(node="c", group="core")) %>%
+#'   addNodeGroup("core", fontcolor="red", color="yellow")
+#' plot(L)
+#' plot(L, nodes=c("c","e","f"))
+#' }
 
-plot.CLD <- function(x, nodes, steps = 1, ...) {
-  if(missing(nodes)){  #plot the whole thing
-    ndf <- DiagrammeR::create_node_df(n = nrow(x$nodes), label = x$nodes$node)
-  } else {
+plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE) {
+  stopifnot(class(CLD) == "CLD")
+  #first, make sure all nodes in the edges table are in the nodes table
+  if(!allEdfNodesListedInNdf(CLD)){
+    stop("CLD$edges$from/CLD$edges$to contain nodes that are absent in CLD$nodes.")
+  }
+  if(!all(CLD$nodes$group %in% CLD$formats$node$group)){
+    zz <- setdiff(CLD$nodes$group, CLD$formats$node$group)
+    stop(paste0("Node group(s) '", paste(zz, collapse="', '"),
+                "' do not exist. Use addNodeGroup()."))
+  }
+  #map node data to what DiagrammeR wants (integer node IDs)
+  ndf <- DiagrammeR::create_node_df(n     = nrow(CLD$nodes),
+                                    type  = CLD$nodes$group,
+                                    label = CLD$nodes$node)
+  nodeFmtData <- CLD$formats$node %>% rename(type=group)
+  ndf  <- left_join(ndf, nodeFmtData, by="type")
+  nodeIDs <- ndf %>% select(id,label)
 
+  edf <- CLD$edges %>%
+    left_join(CLD$formats$edge, by="polarity") %>%
+    rename(label=from) %>%
+    left_join(nodeIDs, by="label") %>%
+    select(-label) %>%
+    rename(from=id, label=to) %>%
+    left_join(nodeIDs, by="label") %>%
+    select(-label) %>%
+    rename(to=id)
+
+  edf <- DiagrammeR::create_edge_df(from      = edf$from,
+                                    to        = edf$to,
+                                    polarity  = edf$polarity,
+                                    style     = edf$style,
+                                    color     = edf$color,
+                                    arrowhead = edf$arrowhead,
+                                    penwidth  = edf$penwidthAdj*edf$weight)
+
+  if(!is.null(nodes)){
+    if(any(!(nodes %in% CLD$nodes$node))){
+      warning(paste0("The following nodes were not in the CLD ",
+                     "and will be ignored:\n     '",
+                    paste0(setdiff(nodes, CLD$nodes$node),
+                           collapse="'\n     '")), "'")
+      nodes <- nodes[nodes %in% CLD$nodes$node]
+    }
+    if(length(nodes)==0) stop("No nodes present in the CLD!")
+    nodes <- ndf$id[ndf$label %in% nodes]  #map nodes to node indices
+    stopifnot(is.numeric(steps) & length(steps)==1)
+    steps <- floor(steps)
+    inNodes <- outNodes <- origNodes <- nodes
+    if(steps>0)  for(i in 1:steps) {
+      inNodes  <- unique(c(inNodes, edf$from[which(edf$to %in% inNodes)]))
+      outNodes <- unique(c(outNodes, edf$to[which(edf$from %in% outNodes)]))
+    }
+    nodes <- unique(c(inNodes,outNodes))
+    ndf <- ndf %>% filter(id %in% nodes)
+    edf <- edf %>% filter(from %in% nodes & to %in% nodes)
+    ix <- which(!(edf$from %in% origNodes) & !(edf$to %in% origNodes))
+    if(recolor & length(ix)>0) edf$color[ix] <- "gray70"
   }
 
-  node_df <-
-    DiagrammeR::create_node_df(n = length(x[["nodes"]]),
-                               label = x[["nodes"]])
-  #
-  # node_df <- data.frame(nodes = x[["nodes"]],
-  #                       stringsAsFactors = FALSE)
-  if (useHydeDefaults) node_df <- mergeDefaultPlotOpts(x, node_df)
-
-  if (!is.null(customNodes)) node_df <- mergeCustomNodes(node_df, customNodes)
-
-  edge_table <- do.call("rbind",
-                        mapply(FUN = mapEdges,
-                               x[["nodes"]],
-                               x[["parents"]],
-                               MoreArgs = list(node_df = node_df)))
-
-  edge_df <- DiagrammeR::create_edge_df(from = edge_table[, 2],
-                                        to = edge_table[, 1])
-
-  if (!is.null(customEdges)) mergeCustomEdges(edge_df, customEdges)
-
-
-
-  DiagrammeR::create_graph(nodes_df = node_df,
-                           edges_df = edge_df,
-                           attr_theme = NULL) %>%
-    DiagrammeR::render_graph()
-
+  g <- DiagrammeR::create_graph(nodes_df=ndf, edges_df=edf)
+  render_graph(g, layout="nicely")
 }
+
+

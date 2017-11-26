@@ -69,7 +69,8 @@ Default attributes are adopted unless the attributes are specified through the
 function.
 }
 \examples{
-L <- CLD(from=c("a","a","c"), to=c("b","c","a")) \%>\%
+L <- CLD(from = c("a","a","c"),
+         to   = c("b","c","a")) \%>\%
   setEdgeFormat("color", "midnightblue", polarity=-1) \%>\%
   setNodeFormat("fillcolor", "yellow")
 #plot(L)

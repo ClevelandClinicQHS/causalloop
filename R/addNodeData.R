@@ -41,6 +41,9 @@ addNodeData <- function(CLD, ndf, replace=FALSE, sorted=TRUE){
   stopifnot("node" %in% names(ndf))
   stopifnot(is.character(ndf$node))
   nodes <- ndf$node
+  if(any(duplicated(nodes))){
+    stop("Duplicate node(s) specified in the 'ndf' table.")
+  }
   if("group" %in% names(ndf)){
     stopifnot(is.character(ndf$group))
     gps <- ndf$group
@@ -51,9 +54,8 @@ addNodeData <- function(CLD, ndf, replace=FALSE, sorted=TRUE){
   newNodeData <- tibble(node=nodes, group=gps)
   newNodeData$group[newNodeData$group %in% c(""," ")] <- "<default>"
   if(replace) {
-    nodesInEdf <- sort(unique(c(CLD$edges$from, CLD$edges$to)))
-    if(!all(nodesInEdf %in% newNodeData$node)){
-      stop("Not all nodes represented in the CLD object are present in the supplied ndf.")
+    if(!allEdfNodesListedInNdf(CLD)){
+      stop("CLD$edges$from and/or CLD$edges$to contain nodes that are absent in CLD$nodes.")
     }
     CLD$nodes <- newNodeData
   } else {

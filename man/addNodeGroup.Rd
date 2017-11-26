@@ -21,9 +21,13 @@ This function specifies the node attributes for a group of nodes, allowing
   easy format management for node groups.
 }
 \examples{
-L <- CLD(from=c("a","a","c","c","d"), to=c("b","c","a","d","a")) \%>\%
-  addNodeData(tibble(node=c("c","d","e","f"), group=c("I"," ","II","I"))) \%>\%
-  addNodeGroup(groups=c("I","II"), fillcolor="yellow", shape=c("box","ellipse"))
+L <- CLD(from = c("a","a","c","c","d"),
+         to   = c("b","c","a","d","a")) \%>\%
+  addNodeData(tibble(node  = c("c","d","e","f"),
+                     group = c("I"," ","II","I"))) \%>\%
+  addNodeGroup(groups=c("I","II"),
+               fillcolor="yellow",
+               shape=c("box","ellipse"))
 }
 \seealso{
 \code{\link{setNodeFormat}}

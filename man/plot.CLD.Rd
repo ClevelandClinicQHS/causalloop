@@ -2,6 +2,7 @@
 % Please edit documentation in R/plot.CLD.R
 \name{plot.CLD}
 \alias{plot.CLD}
+\alias{plotCLD}
 \title{Plot a causal loop diagram object}
 \source{
 \url{http://rich-iannone.github.io/DiagrammeR/graphviz_and_mermaid.html}\cr
@@ -11,22 +12,10 @@
   \url{http://graphviz.org/content/attrs}
 }
 \usage{
-\method{plot}{HydeNetwork}(x, nodes, steps = 1, ...)
+\method{plot}{CLD}(CLD, nodes = NULL, steps = 1, recolor = TRUE)
 }
 \arguments{
-\item{x}{an object of class \code{HydeNetwork}}
-
-\item{nodes}{(optional) character vector containing the nodes to be plotted. By default,
-when this parameter is specified, all nodes having links to the specified nodes are
-also visualized (i.e., \code{steps = 1}).
-between nodes.}
-
-\item{steps}{(optional) Maximum number of steps away from the specified \code{nodes} to
-be included in the figure. Defaults to 1. Only has an effect when \code{nodes} is
-specified.}
-
-\item{...}{for the \code{plot} method, additional arguments to be passed to
-\code{DiagrammeR::render_graph}.}
+\item{CLD}{an object of class \code{CLD}}
 }
 \description{
 Causal loop diagrams are generated through an interface to the
@@ -35,8 +24,19 @@ Causal loop diagrams are generated through an interface to the
   \code{setNodeFormat()}.
 }
 \details{
-See 'Sources' for links to additional documentation from the \code{DiagrammeR}
-  package and the GraphViz website.
+See 'Sources' for links to additional documentation from the
+  \code{DiagrammeR} package and the GraphViz website.
+}
+\examples{
+\dontrun{
+#* Plots may open in a browser.
+L <- CLD(from=c("a","a","b","c","d","d"), to=c("b","c","a","d","b","a"),
+           polarity=c(1,1,-1,-1,1,-1)) \%>\%
+  addNodeData(tibble(node="c", group="core")) \%>\%
+  addNodeGroup("core", fontcolor="red", color="yellow")
+plot(L)
+plot(L, nodes=c("c","e","f"))
+}
 }
 \author{
 Jarrod Dalton

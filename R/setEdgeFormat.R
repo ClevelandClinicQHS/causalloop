@@ -106,7 +106,10 @@ setNodeFormat <- function(CLD, groups, ...){
       nattribVals <- dots[[nattrib]]
       stopifnot(is.vector(nattribVals))
       if(length(nattribVals) == 1){
-        warning(paste0("Applying ", nattrib, "=", nattribVals, " to all node groups."))
+        if(length(groups) > 1) {
+          warning(paste0("Applying ", nattrib, "=", nattribVals,
+                         " to all node groups."))
+        }
       } else if(length(nattribVals) != length(groups)){
         stop(paste("Parameter", nattrib,
                    "must be length 1 or have length equal to length(groups)."))

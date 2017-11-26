@@ -4,7 +4,7 @@
 \alias{edf2CLD}
 \title{Convert edge data frame into a causal loop diagram (CLD) object}
 \usage{
-edf2CLD(edf, ndf)
+edf2CLD(edf, ndf, ...)
 }
 \arguments{
 \item{edf}{An edge data frame containing at least character columns \code{from} and
