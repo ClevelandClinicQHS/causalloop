@@ -37,7 +37,7 @@
 plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE) {
   stopifnot(class(CLD) == "CLD")
   #first, make sure all nodes in the edges table are in the nodes table
-  if(!allEdfNodesListedInNdf(CLD)){
+  if(!causalloop:::allEdfNodesListedInNdf(CLD)){
     stop("CLD$edges$from/CLD$edges$to contain nodes that are absent in CLD$nodes.")
   }
   if(!all(CLD$nodes$group %in% CLD$formats$node$group)){
@@ -95,8 +95,11 @@ plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE) {
     if(recolor & length(ix)>0) edf$color[ix] <- "gray70"
   }
 
-  g <- DiagrammeR::create_graph(nodes_df=ndf, edges_df=edf)
-  render_graph(g, layout="nicely")
+  g <- DiagrammeR::create_graph(nodes_df=ndf, edges_df=edf) %>%
+    DiagrammeR::set_global_graph_attrs(attr      = "overlap",
+                                       value     = "false",
+                                       attr_type = "graph")
+  DiagrammeR::render_graph(g)
 }
 
 
