@@ -43,7 +43,7 @@ Create a causal loop diagram (CLD) object
 }
 \examples{
 L <- CLD(from=c("a","a","c","c","d"), to=c("b","c","a","d","a"))
-L$edf
+L$edges
 
 
 }

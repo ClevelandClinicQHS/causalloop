@@ -11,6 +11,17 @@
 #'
 #' @param CLD an object of class \code{CLD}
 #'
+#' @param nodes Subset of nodes in the CLD to visualize.
+#'
+#' @param steps Nodes not in the \code{nodes} parameter will also be
+#'   displayed if they are within \code{steps} edges of the CLD. By
+#'   default, connections involving these nodes are recolored
+#'   (see parameter \code{recolor}).
+#'
+#' @param recolor Logical. Recolor ancillary links (i.e., links involving
+#'   nodes other than those specified in the \code{nodes} argument)
+#'   to \code{gray70}.
+#'
 #' @param textWidth The target width of node names, which are all passed to
 #'  \code{stringr::str_wrap()}.
 #'
@@ -30,19 +41,21 @@
 #' @examples
 #' \dontrun{
 #' #* Plots may open in a browser.
-#' L <- CLD(from=c("a","a","b","c","d","d"), to=c("b","c","a","d","b","a"),
-#'            polarity=c(1,1,-1,-1,1,-1)) %>%
+#' L <- CLD(from     = c("a","a","b","c","d","d","e"),
+#'          to       = c("b","c","a","d","b","a","d"),
+#'          polarity = c(1,1,-1,-1,1,-1,1)) %>%
 #'   addNodeData(tibble(node="c", group="core")) %>%
 #'   addNodeGroup("core", fontcolor="red", color="yellow")
 #' plot(L)
-#' plot(L, nodes=c("c","e","f"))
+#' plot(L, nodes=c("c"))
 #' }
 
-plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE, textWidth = 10) {
+plot.CLD <- function(CLD, nodes=NULL, steps = 1,
+                     recolor=TRUE, textWidth = 10) {
   stopifnot(class(CLD) == "CLD")
   #first, make sure all nodes in the edges table are in the nodes table
   if(!causalloop:::allEdfNodesListedInNdf(CLD)){
-    stop("CLD$edges$from/CLD$edges$to contain nodes that are absent in CLD$nodes.")
+    stop("CLD$edges contains nodes that are absent in CLD$nodes.")
   }
   if(!all(CLD$nodes$group %in% CLD$formats$node$group)){
     zz <- setdiff(CLD$nodes$group, CLD$formats$node$group)
@@ -102,7 +115,7 @@ plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE, textWidth = 10) {
   ndf$label <- stringr::str_wrap(ndf$label, width = textWidth)
 
   g <- DiagrammeR::create_graph(nodes_df=ndf, edges_df=edf) %>%
-    DiagrammeR::set_global_graph_attrs(attr      = "overlap",
+    DiagrammeR::add_global_graph_attrs(attr      = "overlap",
                                        value     = "false",
                                        attr_type = "graph")
   DiagrammeR::render_graph(g)

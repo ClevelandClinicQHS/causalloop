@@ -13,12 +13,23 @@
 }
 \usage{
 \method{plot}{CLD}(CLD, nodes = NULL, steps = 1, recolor = TRUE,
-  nodeTxtWidth = 18)
+  textWidth = 10)
 }
 \arguments{
 \item{CLD}{an object of class \code{CLD}}
 
-\item{nodeTxtWidth}{The target width of node names, which are all passed to
+\item{nodes}{Subset of nodes in the CLD to visualize.}
+
+\item{steps}{Nodes not in the \code{nodes} parameter will also be
+displayed if they are within \code{steps} edges of the CLD. By
+default, connections involving these nodes are recolored
+(see parameter \code{recolor}).}
+
+\item{recolor}{Logical. Recolor ancillary links (i.e., links involving
+nodes other than those specified in the \code{nodes} argument)
+to \code{gray70}.}
+
+\item{textWidth}{The target width of node names, which are all passed to
 \code{stringr::str_wrap()}.}
 }
 \description{
@@ -34,12 +45,13 @@ See 'Sources' for links to additional documentation from the
 \examples{
 \dontrun{
 #* Plots may open in a browser.
-L <- CLD(from=c("a","a","b","c","d","d"), to=c("b","c","a","d","b","a"),
-           polarity=c(1,1,-1,-1,1,-1)) \%>\%
+L <- CLD(from     = c("a","a","b","c","d","d","e"),
+         to       = c("b","c","a","d","b","a","d"),
+         polarity = c(1,1,-1,-1,1,-1,1)) \%>\%
   addNodeData(tibble(node="c", group="core")) \%>\%
   addNodeGroup("core", fontcolor="red", color="yellow")
 plot(L)
-plot(L, nodes=c("c","e","f"))
+plot(L, nodes=c("c"))
 }
 }
 \author{

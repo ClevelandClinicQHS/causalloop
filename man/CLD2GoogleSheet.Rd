@@ -7,7 +7,14 @@
 CLD2GoogleSheet(CLD, key, replace = FALSE)
 }
 \arguments{
-\item{replace}{}
+\item{CLD}{A CLD object.}
+
+\item{key}{Google Sheets key.}
+
+\item{replace}{Logical. Replace table contents?}
+}
+\value{
+The number 1.
 }
 \description{
 Title

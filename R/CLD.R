@@ -32,7 +32,7 @@
 #'
 #' @examples
 #' L <- CLD(from=c("a","a","c","c","d"), to=c("b","c","a","d","a"))
-#' L$edf
+#' L$edges
 #'
 #'
 CLD <- function(from, to, polarity=1, weight=1){
