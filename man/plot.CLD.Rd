@@ -12,10 +12,14 @@
   \url{http://graphviz.org/content/attrs}
 }
 \usage{
-\method{plot}{CLD}(CLD, nodes = NULL, steps = 1, recolor = TRUE)
+\method{plot}{CLD}(CLD, nodes = NULL, steps = 1, recolor = TRUE,
+  nodeTxtWidth = 18)
 }
 \arguments{
 \item{CLD}{an object of class \code{CLD}}
+
+\item{nodeTxtWidth}{The target width of node names, which are all passed to
+\code{stringr::str_wrap()}.}
 }
 \description{
 Causal loop diagrams are generated through an interface to the

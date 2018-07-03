@@ -11,6 +11,9 @@
 #'
 #' @param CLD an object of class \code{CLD}
 #'
+#' @param textWidth The target width of node names, which are all passed to
+#'  \code{stringr::str_wrap()}.
+#'
 #' @details See 'Sources' for links to additional documentation from the
 #'   \code{DiagrammeR} package and the GraphViz website.
 #'
@@ -23,6 +26,7 @@
 #'   \url{http://graphviz.org/}\cr
 #'   \url{http://graphviz.org/content/attrs}
 #'
+#'
 #' @examples
 #' \dontrun{
 #' #* Plots may open in a browser.
@@ -34,7 +38,7 @@
 #' plot(L, nodes=c("c","e","f"))
 #' }
 
-plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE) {
+plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE, textWidth = 10) {
   stopifnot(class(CLD) == "CLD")
   #first, make sure all nodes in the edges table are in the nodes table
   if(!causalloop:::allEdfNodesListedInNdf(CLD)){
@@ -94,6 +98,8 @@ plot.CLD <- function(CLD, nodes=NULL, steps = 1, recolor=TRUE) {
     ix <- which(!(edf$from %in% origNodes) & !(edf$to %in% origNodes))
     if(recolor & length(ix)>0) edf$color[ix] <- "gray70"
   }
+
+  ndf$label <- stringr::str_wrap(ndf$label, width = textWidth)
 
   g <- DiagrammeR::create_graph(nodes_df=ndf, edges_df=edf) %>%
     DiagrammeR::set_global_graph_attrs(attr      = "overlap",
