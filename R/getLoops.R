@@ -23,7 +23,28 @@
 #
 #'
 #' @examples
-#' 1:3
+#' edges <- tibble::tribble(
+#' ~from, ~to, ~polarity,
+#' 1,2,1,
+#' 1,5,1,
+#' 1,8,1,
+#' 2,3,-1,
+#' 2,7,1,
+#' 2,9,1,
+#' 3,1,1,
+#' 3,2,1,
+#' 3,4,1,
+#' 3,6,-1,
+#' 4,5,1,
+#' 5,2,1,
+#' 6,4,1,
+#' 8,9,-1,
+#' 9,8,1
+#' )
+#' txtedges <- edges %>% dplyr::mutate(from = letters[from], to = letters[to])
+#' z <- CLD(txtedges$from, txtedges$to, polarity = txtedges$polarity)
+#' getLoops(z)
+#'
 getLoops <- function(CLD){
 
   # make:
