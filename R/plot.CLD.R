@@ -66,19 +66,19 @@ plot.CLD <- function(CLD, nodes=NULL, steps = 1,
   ndf <- DiagrammeR::create_node_df(n     = nrow(CLD$nodes),
                                     type  = CLD$nodes$group,
                                     label = CLD$nodes$node)
-  nodeFmtData <- CLD$formats$node %>% rename(type=group)
-  ndf  <- left_join(ndf, nodeFmtData, by="type")
+  nodeFmtData <- CLD$formats$node %>% dplyr::rename(type=group)
+  ndf  <- dplyr::left_join(ndf, nodeFmtData, by="type")
   nodeIDs <- ndf %>% select(id,label)
 
   edf <- CLD$edges %>%
-    left_join(CLD$formats$edge, by="polarity") %>%
-    rename(label=from) %>%
-    left_join(nodeIDs, by="label") %>%
-    select(-label) %>%
-    rename(from=id, label=to) %>%
-    left_join(nodeIDs, by="label") %>%
-    select(-label) %>%
-    rename(to=id)
+    dplyr::left_join(CLD$formats$edge, by="polarity") %>%
+    dplyr::rename(label=from) %>%
+    dplyr::left_join(nodeIDs, by="label") %>%
+    dplyr::select(-label) %>%
+    dplyr::rename(from=id, label=to) %>%
+    dplyr::left_join(nodeIDs, by="label") %>%
+    dplyr::select(-label) %>%
+    dplyr::rename(to=id)
 
   edf <- DiagrammeR::create_edge_df(from      = edf$from,
                                     to        = edf$to,
@@ -106,8 +106,8 @@ plot.CLD <- function(CLD, nodes=NULL, steps = 1,
       outNodes <- unique(c(outNodes, edf$to[which(edf$from %in% outNodes)]))
     }
     nodes <- unique(c(inNodes,outNodes))
-    ndf <- ndf %>% filter(id %in% nodes)
-    edf <- edf %>% filter(from %in% nodes & to %in% nodes)
+    ndf <- ndf %>% dplyr::filter(id %in% nodes)
+    edf <- edf %>% dplyr::filter(from %in% nodes & to %in% nodes)
     ix <- which(!(edf$from %in% origNodes) & !(edf$to %in% origNodes))
     if(recolor & length(ix)>0) edf$color[ix] <- "gray70"
   }
