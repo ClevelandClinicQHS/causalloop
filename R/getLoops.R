@@ -186,4 +186,3 @@ getLoops <- function(CLD){
   }
   purrr::map(nodeID_graph_cycles, makeCycleListOutput)
 }
-getLoops(zz)
