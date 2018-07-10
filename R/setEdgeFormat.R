@@ -114,15 +114,16 @@ setNodeFormat <- function(CLD, groups, ...){
         stop(paste("Parameter", nattrib,
                    "must be length 1 or have length equal to length(groups)."))
       }
-      tmp <- tibble(group=groups)
+      tmp <- dplyr::tibble(group=groups)
       tmp[,nattrib] <- nattribVals
       modifiedGpNodeData <- CLD$formats$node[,names(CLD$formats$node) != nattrib] %>%
-        filter(group %in% groups) %>%
-        left_join(tmp, by="group") %>%
-        select("group", nattribNames)
-      otherGpNodeData <- CLD$formats$node %>% filter(!(group %in% groups))
-      CLD$formats$node <- bind_rows(modifiedGpNodeData, otherGpNodeData) %>%
-        arrange(group)
+        dplyr::filter(group %in% groups) %>%
+        dplyr::left_join(tmp, by="group") %>%
+        dplyr::select("group", nattribNames)
+      otherGpNodeData <- CLD$formats$node %>%
+        dplyr::filter(!(group %in% groups))
+      CLD$formats$node <- dplyr::bind_rows(modifiedGpNodeData, otherGpNodeData) %>%
+        dplyr::arrange(group)
     }
   }
   CLD

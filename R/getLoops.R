@@ -1,6 +1,6 @@
 #' Extract Feedback Loops from a Causal Loop Diagram
 #'
-#' @param CLD a CLD object
+#' @param x a CLD object
 #'
 #' @return a list of 2-element lists, each with element \code{[[1]]} containing
 #'   a feedback loop and element \code{[[2]]} containing the loop's type (i.e.,
@@ -43,9 +43,9 @@
 #' )
 #' txtedges <- edges %>% dplyr::mutate(from = letters[from], to = letters[to])
 #' z <- CLD(txtedges$from, txtedges$to, polarity = txtedges$polarity)
-#' getLoops(z)
 #'
-getLoops <- function(CLD){
+#'
+getLoops <- function(x){
 
   # make:
   #  1) a lookup table from node labels in CLD$edges to integer nodeIDs; and

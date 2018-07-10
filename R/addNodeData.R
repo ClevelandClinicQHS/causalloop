@@ -51,18 +51,18 @@ addNodeData <- function(CLD, ndf, replace=FALSE, sorted=TRUE){
     warning("No 'group' variable specified in parameter 'ndf'. Setting to \"default\".")
     gps <- rep("", length(nodes))
   }
-  newNodeData <- tibble(node=nodes, group=gps)
+  newNodeData <- tibble::tibble(node=nodes, group=gps)
   newNodeData$group[newNodeData$group %in% c(""," ")] <- "<default>"
   if(replace) {
-    if(!allEdfNodesListedInNdf(CLD)){
+    if(!causalloop:::allEdfNodesListedInNdf(CLD)){
       stop("CLD$edges$from and/or CLD$edges$to contain nodes that are absent in CLD$nodes.")
     }
     CLD$nodes <- newNodeData
   } else {
     CLD$nodes <- CLD$nodes %>%
-      filter(!(node %in% nodes)) %>%
-      bind_rows(newNodeData)
+      dplyr::filter(!(node %in% nodes)) %>%
+      dplyr::bind_rows(newNodeData)
   }
-  if(sorted) CLD$nodes <- CLD$nodes %>% arrange(node)
+  if(sorted) CLD$nodes <- CLD$nodes %>% dplyr::arrange(node)
   CLD
 }

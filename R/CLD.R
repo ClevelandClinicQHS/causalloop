@@ -56,24 +56,24 @@ CLD <- function(from, to, polarity=1, weight=1){
   edf$weight <- weight
 
   #set up default edge and node formats
-  efmt <- tibble(polarity    = c(1,-1),
-                 style       = c("solid","dotted"),
-                 color       = c("ForestGreen","red"),
-                 arrowhead   = c("vee","box"),
-                 penwidthAdj = c(1,2))
+  efmt <- dplyr::tibble(polarity    = c(1,-1),
+                        style       = c("solid","dotted"),
+                        color       = c("ForestGreen","red"),
+                        arrowhead   = c("vee","box"),
+                        penwidthAdj = c(1,2))
 
-  nfmt = tibble(group      = "<default>",
-                shape      = "rectangle",
-                style      = "transparent",
-                color      = "transparent",
-                fillcolor  = "transparent",
-                fontname   = "Arial Narrow",
-                fontcolor  = "black",
-                height     = 0.5,
-                width      = 0.7)
+  nfmt = dplyr::tibble(group      = "<default>",
+                       shape      = "rectangle",
+                       style      = "transparent",
+                       color      = "transparent",
+                       fillcolor  = "transparent",
+                       fontname   = "Arial Narrow",
+                       fontcolor  = "black",
+                       height     = 0.5,
+                       width      = 0.7)
 
   nodes <- sort(unique(c(edf$from, edf$to)))
-  ndf <- tibble(node=nodes, group="<default>")
+  ndf <- dplyr::tibble(node=nodes, group="<default>")
 
   L <- list(edges=edf, nodes=ndf, formats=list(edge=efmt, node=nfmt))
   class(L) <- "CLD"

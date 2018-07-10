@@ -28,11 +28,12 @@ addNodeGroup <- function(CLD, groups, ...){
     stop("Some groups already exist in the supplied CLD object.")
   }
   tmp <- CLD$formats$node %>%
-    filter(group == "<default>") %>%
-    mutate(dummy=1) %>%
-    select(-group)
-  newNodeData <- left_join(tibble(group=groups, dummy=1), tmp, by="dummy") %>%
-    select(-dummy)
-  CLD$formats$node <- bind_rows(CLD$formats$node, newNodeData)
+    dplyr::filter(group == "<default>") %>%
+    dplyr::mutate(dummy=1) %>%
+    dplyr::select(-group)
+  newNodeData <- dplyr::left_join(dplyr::tibble(group=groups, dummy=1),
+                                  tmp, by="dummy") %>%
+    dplyr::select(-dummy)
+  CLD$formats$node <- dplyr::bind_rows(CLD$formats$node, newNodeData)
   setNodeFormat(CLD, groups, ...)
 }

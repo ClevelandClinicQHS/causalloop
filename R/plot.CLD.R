@@ -44,7 +44,7 @@
 #' L <- CLD(from     = c("a","a","b","c","d","d","e"),
 #'          to       = c("b","c","a","d","b","a","d"),
 #'          polarity = c(1,1,-1,-1,1,-1,1)) %>%
-#'   addNodeData(tibble(node="c", group="core")) %>%
+#'   addNodeData(tibble::tibble(node="c", group="core")) %>%
 #'   addNodeGroup("core", fontcolor="red", color="yellow")
 #' plot(L)
 #' plot(L, nodes=c("c"))
@@ -68,7 +68,7 @@ plot.CLD <- function(CLD, nodes=NULL, steps = 1,
                                     label = CLD$nodes$node)
   nodeFmtData <- CLD$formats$node %>% dplyr::rename(type=group)
   ndf  <- dplyr::left_join(ndf, nodeFmtData, by="type")
-  nodeIDs <- ndf %>% select(id,label)
+  nodeIDs <- ndf %>% dplyr::select(id,label)
 
   edf <- CLD$edges %>%
     dplyr::left_join(CLD$formats$edge, by="polarity") %>%
