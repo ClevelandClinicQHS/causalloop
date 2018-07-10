@@ -50,9 +50,9 @@ getLoops <- function(CLD){
   # make:
   #  1) a lookup table from node labels in CLD$edges to integer nodeIDs; and
   #  2) an igraph object with the graph structure (index by the integer nodeIDs)
-  if(!causalloop:::allEdfNodesListedInNdf(CLD)) {
-    stop("The 'edges' table in the CLD object contains nodes not in the 'nodes' table.")
-  }
+  # if(!causalloop:::allEdfNodesListedInNdf(CLD)) {
+  #   stop("The 'edges' table in the CLD object contains nodes not in the 'nodes' table.")
+  # }
   nodeIxTable <- dplyr::select(CLD$nodes, node) %>%
     dplyr::group_by(node) %>%
     dplyr::filter(row_number() == 1) %>%

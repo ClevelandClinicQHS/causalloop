@@ -17,4 +17,5 @@ Imports:
     magrittr,
     dplyr,
     DiagrammeR,
-    purrr
+    purrr,
+    tibble
