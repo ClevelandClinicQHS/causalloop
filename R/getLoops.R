@@ -1,6 +1,13 @@
-#' Extract Feedback Loops from a Causal Loop Diagram
+#' @name getLoops
+#' @export getLoops
+#' @title Extract, Plot and Manipulate Labels for Feedback Loops in a Causal Loop Diagram
 #'
 #' @param x a CLD object
+#' @param FBL A \code{feedbackLoops} object (i.e., object outputted from \code{getLoops()})
+#' @param loopIx Loop index. When \code{getLoops()} is run, each loop is assigned an index.
+#'   The function \code{setLoopLabel} will take a \code{loopIx} as input. The loop indices
+#'   are always displayed in the \code{plot} method.
+#' @param label Label to assign to a feedback loop in \code{setLoopLabel()}.
 #'
 #' @return a list of 2-element lists, each with element \code{[[1]]} containing
 #'   a feedback loop and element \code{[[2]]} containing the loop's type (i.e.,
@@ -43,25 +50,26 @@
 #' )
 #' txtedges <- edges %>% dplyr::mutate(from = letters[from], to = letters[to])
 #' z <- CLD(txtedges$from, txtedges$to, polarity = txtedges$polarity)
-#'
+#' loops <- getLoops(z)
+#' loops <- setLoopLabel(loops, loopIx = 5, label = "BCFdE!")
 #'
 getLoops <- function(x){
 
   # make:
-  #  1) a lookup table from node labels in CLD$edges to integer nodeIDs; and
+  #  1) a lookup table from node labels in x$edges to integer nodeIDs; and
   #  2) an igraph object with the graph structure (index by the integer nodeIDs)
-  # if(!causalloop:::allEdfNodesListedInNdf(CLD)) {
+  # if(!causalloop:::allEdfNodesListedInNdf(x)) {
   #   stop("The 'edges' table in the CLD object contains nodes not in the 'nodes' table.")
   # }
-  nodeIxTable <- dplyr::select(CLD$nodes, node) %>%
+  nodeIxTable <- dplyr::select(x$nodes, node) %>%
     dplyr::group_by(node) %>%
-    dplyr::filter(row_number() == 1) %>%
+    dplyr::filter(dplyr::row_number() == 1) %>%
     dplyr::ungroup() %>%
     dplyr::rename(from = node) %>%
     dplyr::mutate(to = from,
                   nodeID = 1:n())
 
-  edf <- dplyr::select(CLD$edges, from, to, polarity) %>%
+  edf <- dplyr::select(x$edges, from, to, polarity) %>%
     dplyr::left_join(nodeIxTable[,c("from","nodeID")], by = "from") %>%
     dplyr::rename(fromID = nodeID) %>%
     dplyr::left_join(nodeIxTable[,c("to","nodeID")], by = "to") %>%
@@ -143,7 +151,7 @@ getLoops <- function(x){
           B[[w]] <- c(B[[w]], v)
       }
       stack <- stack[-length(stack)]
-      return(list(B=B, b=b, f=f, stack=stack, foundCycles=foundCycles))
+      return(list(B=B, b=b, f=f, stack=stack))
     }
 
     b <- rep(FALSE, igraph::vcount(g))
@@ -184,5 +192,30 @@ getLoops <- function(x){
     return(list(cycle = cycle,
                 type = type))
   }
-  purrr::map(nodeID_graph_cycles, makeCycleListOutput)
+  Result <- purrr::map(nodeID_graph_cycles, makeCycleListOutput)
+
+  tmp <- purrr::map2(as.list(1:length(Result)), as.list(rep("",length(Result))),
+                     function(.x, .y) list(loopIx = .x, label = .y))
+  Result <- purrr::map2(tmp, Result,
+                        function(.x, .y) list(loopIx = .x$loopIx,
+                                              label  = .x$label,
+                                              type   = .y$type,
+                                              cycle  = .y$cycle))
+  class(Result) <- "feedbackLoops"
+  Result
+}
+
+#' @rdname getLoops
+#' @export setLoopLabel
+
+setLoopLabel <- function(FBL, loopIx, label){
+  stopifnot(class(FBL) == "feedbackLoops")
+  FBL <- purrr::map_if(FBL,
+                       .p = function(.x) .x$loopIx == loopIx,
+                       .f = function(.x) {
+                         .x$label <- label
+                         .x
+                       }
+  )
+  class(FBL) <- "feedbackLoops"
 }
