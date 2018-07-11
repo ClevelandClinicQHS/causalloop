@@ -2,12 +2,23 @@
 % Please edit documentation in R/getLoops.R
 \name{getLoops}
 \alias{getLoops}
-\title{Extract Feedback Loops from a Causal Loop Diagram}
+\alias{setLoopLabel}
+\title{Extract, Plot and Manipulate Labels for Feedback Loops in a Causal Loop Diagram}
 \usage{
-getLoops(CLD)
+getLoops(x)
+
+setLoopLabel(FBL, loopIx, label)
 }
 \arguments{
-\item{CLD}{a CLD object}
+\item{x}{a CLD object}
+
+\item{FBL}{A \code{feedbackLoops} object (i.e., object outputted from \code{getLoops()})}
+
+\item{loopIx}{Loop index. When \code{getLoops()} is run, each loop is assigned an index.
+The function \code{setLoopLabel} will take a \code{loopIx} as input. The loop indices
+are always displayed in the \code{plot} method.}
+
+\item{label}{Label to assign to a feedback loop in \code{setLoopLabel()}.}
 }
 \value{
 a list of 2-element lists, each with element \code{[[1]]} containing
@@ -16,9 +27,6 @@ a list of 2-element lists, each with element \code{[[1]]} containing
   of links with negative polarity, and reinforcing loops have an even
   number of links with negative polarity.
 }
-\description{
-Extract Feedback Loops from a Causal Loop Diagram
-}
 \details{
 This function applies Johnson's algorithm for finding cycles
   in a directed graph. In particular, we adapt for the \code{causalloop}
@@ -26,8 +34,34 @@ This function applies Johnson's algorithm for finding cycles
   which can be found on GitHub at the link below (see References)
 }
 \examples{
-1:3
+edges <- tibble::tribble(
+~from, ~to, ~polarity,
+1,2,1,
+1,5,1,
+1,8,1,
+2,3,-1,
+2,7,1,
+2,9,1,
+3,1,1,
+3,2,1,
+3,4,1,
+3,6,-1,
+4,5,1,
+5,2,1,
+6,4,1,
+8,9,-1,
+9,8,1
+)
+txtedges <- edges \%>\% dplyr::mutate(from = letters[from], to = letters[to])
+z <- CLD(txtedges$from, txtedges$to, polarity = txtedges$polarity)
+loops <- getLoops(z)
+loops <- setLoopLabel(loops, loopIx = 5, label = "BCFdE!")
+
 }
 \references{
-\url{https://github.com/queenBNE/DirectedGraphsCycles}
+Johnson, D. B. (1975). Finding all the elementary circuits of a
+  directed graph. SIAM Journal on Computing, 4(1), 77-84.
+
+  Carstens, J. R implementation of Johnson's algorithm.
+  \url{https://github.com/queenBNE/DirectedGraphsCycles}
 }

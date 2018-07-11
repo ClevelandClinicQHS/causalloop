@@ -48,7 +48,7 @@ See 'Sources' for links to additional documentation from the
 L <- CLD(from     = c("a","a","b","c","d","d","e"),
          to       = c("b","c","a","d","b","a","d"),
          polarity = c(1,1,-1,-1,1,-1,1)) \%>\%
-  addNodeData(tibble(node="c", group="core")) \%>\%
+  addNodeData(tibble::tibble(node="c", group="core")) \%>\%
   addNodeGroup("core", fontcolor="red", color="yellow")
 plot(L)
 plot(L, nodes=c("c"))
