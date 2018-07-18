@@ -218,4 +218,52 @@ setLoopLabel <- function(FBL, loopIx, label){
                        }
   )
   class(FBL) <- "feedbackLoops"
+  return(FBL)
 }
+
+#' @rdname getLoops
+#' @export plot.feedbackLoops
+
+plot.feedbackLoops <- function(FBL, ...){
+  stopifnot(class(FBL) == "feedbackLoops")
+  .dots <- list(...)
+  if(all(c("nodes","loopIx") %in% names(.dots))){
+    stop("Either 'nodes' or 'loopIx' can be specified, but not both.")
+  }
+  if("nodes" %in% names(.dots)){
+    stopifnot(is.character(nodes) | is.numeric(nodes))
+    #get table of nodes involved with each loop
+    FBL.nodes <- purrr::map(FBL, function(l){
+      tibble::tibble(loopIx = l$loopIx, nodes = c(l$cycle$from, l$cycle$to))
+    })
+    FBL.nodes <- FBL.nodes %>%
+      dplyr::bind_rows() %>%
+      dplyr::group_by(loopIx, nodes) %>%
+      dplyr::filter(dplyr::row_number() == 1) %>%
+      dplyr::ungroup()
+    selectedLoops <- dplyr::left_join(tibble::tibble(nodes = nodes),
+                                      FBL.nodes, by = "nodes") %>%
+      dplyr::select(loopIx)
+    FBL <- FBL[unlist(purrr::map(FBL, function(.x) .x$loopIx %in% selectedLoops$loopIx))]
+  }
+
+  if("loopIx" %in% names(.dots)){
+    stopifnot(is.numeric(loopIx))
+    FBL <- FBL[unlist(purrr::map(FBL, function(.x) .x$loopIx %in% loopIx))]
+  }
+  if(length(FBL) == 0){
+    stop("No loops found involving the loop indices given in 'loopIx'!")
+  }
+
+  #make tibble containing the selected feedback loops
+  loopToTibble <- function(l){
+    l$cycle %>%
+      dplyr::mutate(loopIx = l$loopIx,
+                    type   = l$type,
+                    label  = paste0(l$loopIx, ": ", l$label)) %>%
+      return
+  }
+  pd <- purrr::map(FBL, loopToTibble) %>% dplyr::bind_rows()
+  pd
+}
+
