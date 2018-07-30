@@ -264,6 +264,13 @@ plot.feedbackLoops <- function(FBL, ...){
       return
   }
   pd <- purrr::map(FBL, loopToTibble) %>% dplyr::bind_rows()
-  pd
+  ggplot2:: ggplot(data=pd) +
+    ggplot2::facet_wrap(~ label) +
+    ggplot2::theme_minimal() +
+    ggplot2::geom_vline(xintercept=0) +
+    ggplot2::scale_x_continuous(breaks=c(-999)) +
+    ggplot2::theme(axis.title.x=ggplot2::element_blank(),
+          axis.text.x=ggplot2::element_blank(),
+          axis.ticks.x=ggplot2::element_blank())
 }
 

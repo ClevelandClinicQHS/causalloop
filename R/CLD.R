@@ -57,9 +57,9 @@ CLD <- function(from, to, polarity=1, weight=1){
 
   #set up default edge and node formats
   efmt <- dplyr::tibble(polarity    = c(1,-1),
-                        style       = c("solid","dotted"),
+                        style       = c("solid","solid"),
                         color       = c("ForestGreen","red"),
-                        arrowhead   = c("vee","box"),
+                        arrowhead   = c("vee","vee"),
                         penwidthAdj = c(1,2))
 
   nfmt = dplyr::tibble(group      = "<default>",
