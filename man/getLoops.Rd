@@ -3,14 +3,25 @@
 \name{getLoops}
 \alias{getLoops}
 \alias{setLoopLabel}
+\alias{plot.feedbackLoops}
 \title{Extract, Plot and Manipulate Labels for Feedback Loops in a Causal Loop Diagram}
 \usage{
-getLoops(x)
+getLoops(x, S = 100, nsteps = 6)
 
 setLoopLabel(FBL, loopIx, label)
+
+\method{plot}{feedbackLoops}(FBL, ...)
 }
 \arguments{
 \item{x}{a CLD object}
+
+\item{S}{number of loop traversals (random walks on directed graph) to be simulated,
+originating from each variable in the CLD.}
+
+\item{nsteps}{number of steps for each loop traversal. Setting this to larger values
+(e.g., 10 or 15) tends to yield a larger number of identified loops, many of which
+involve large numbers of variables. The default value of 6 tends to yield simpler
+loop structures (which contain up to a maximum of 6 variables).}
 
 \item{FBL}{A \code{feedbackLoops} object (i.e., object outputted from \code{getLoops()})}
 
@@ -28,10 +39,9 @@ a list of 2-element lists, each with element \code{[[1]]} containing
   number of links with negative polarity.
 }
 \details{
-This function applies Johnson's algorithm for finding cycles
-  in a directed graph. In particular, we adapt for the \code{causalloop}
-  package Jacobien Carstens' implementation of Johnson's algorithm,
-  which can be found on GitHub at the link below (see References)
+This function applies a particle-based approach to identifying loops
+  (cycles) within a causal loop diagram.  Random walks are generated, initiated at
+  each variable, and any cycles that are identified are retained and numbered.
 }
 \examples{
 edges <- tibble::tribble(
@@ -59,9 +69,5 @@ loops <- setLoopLabel(loops, loopIx = 5, label = "BCFdE!")
 
 }
 \references{
-Johnson, D. B. (1975). Finding all the elementary circuits of a
-  directed graph. SIAM Journal on Computing, 4(1), 77-84.
 
-  Carstens, J. R implementation of Johnson's algorithm.
-  \url{https://github.com/queenBNE/DirectedGraphsCycles}
 }
