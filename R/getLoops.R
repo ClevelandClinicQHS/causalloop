@@ -61,7 +61,7 @@ getLoops <- function(x, S = 100, nsteps=6){
     dplyr::ungroup() %>%
     dplyr::rename(from = node) %>%
     dplyr::mutate(to = from,
-                  nodeID = 1:n())
+                  nodeID = 1:dplyr::n())
 
   edf <- dplyr::select(x$edges, from, to, polarity) %>%
     dplyr::left_join(nodeIxTable[,c("from","nodeID")], by = "from") %>%
